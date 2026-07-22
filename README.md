@@ -1,248 +1,91 @@
-# Solving Overdetermined Linear Systems Using Linear Algebra
+# 🧮 Linear System Solver Comparison
 
-## Project Overview
+> A comprehensive comparison of four numerical methods for solving overdetermined linear systems:  
+> **Least Squares (Pseudo-Inverse), QR Decomposition, SVD Decomposition, and Linear Regression (scikit-learn).**
 
-This project implements multiple numerical methods for solving
-**overdetermined systems of linear equations** using concepts from
-**Linear Algebra**.
+---
 
-Instead of relying solely on machine learning libraries, the project
-develops the mathematical algorithms from scratch, including:
+## 📌 Table of Contents
 
--   Least Squares
--   QR Decomposition
--   Singular Value Decomposition (SVD)
+- [Project Overview](#project-overview)
+- [Objectives](#objectives)
+- [Mathematical Background](#mathematical-background)
+- [Project Structure](#project-structure)
+- [Installation & Requirements](#installation--requirements)
+- [How to Run](#how-to-run)
+- [Methods Explained](#methods-explained)
+- [Evaluation Metrics](#evaluation-metrics)
+- [Sample Output](#sample-output)
+- [Results Interpretation](#results-interpretation)
+- [Educational Value](#educational-value)
+- [Future Improvements](#future-improvements)
+- [Author](#author)
+- [License](#license)
 
-The obtained solutions are compared with **Scikit-Learn's Linear
-Regression** implementation to verify correctness and numerical
-consistency.
+---
 
-This project was developed as part of a **Linear Algebra** course.
+## 📖 Project Overview
 
-------------------------------------------------------------------------
+This project implements and compares **four different numerical methods** for solving overdetermined linear systems of the form:
 
-# Objectives
+\[
+Ax \approx b
+\]
 
-The main objectives of this project are:
+where \(A\) is an \(m \times n\) matrix with \(m > n\) (more equations than unknowns). Such systems are common in data fitting, regression analysis, and machine learning. Since an exact solution generally does not exist, we seek the **least squares solution** that minimizes the residual norm:
 
--   Read and preprocess the dataset.
--   Construct matrix **A** and vector **b**.
--   Standardize the input features.
--   Solve the system using Least Squares.
--   Solve the system using QR Decomposition.
--   Solve the system using Singular Value Decomposition (SVD).
--   Compare all methods with Linear Regression.
--   Evaluate prediction accuracy using MSE and R².
--   Compute the residual norm.
--   Measure execution time.
--   Verify numerical consistency between all methods.
+\[
+\min_x \|Ax - b\|_2
+\]
 
-------------------------------------------------------------------------
+The project was developed as part of a **Linear Algebra course** to demonstrate the practical application of matrix decomposition techniques in solving real-world problems.
 
-# Project Structure
+---
 
-``` text
-Linear_Algebra_Project2
-│
-├── dataset.csv
-├── main.py
-├── README.md
-│
-└── utils
-    ├── least_squares.py
-    ├── qr_solver.py
-    └── svd_solver.py
-```
+## 🎯 Objectives
 
-------------------------------------------------------------------------
+- ✅ Load and preprocess a real-world dataset
+- ✅ Implement three numerical solvers from scratch:
+  - Moore‑Penrose **Pseudo‑Inverse**
+  - **QR Decomposition**
+  - **SVD Decomposition**
+- ✅ Compare results with scikit-learn's `LinearRegression`
+- ✅ Evaluate performance using:
+  - **Mean Squared Error (MSE)**
+  - **R² Score**
+  - **Residual Norm** \(\|Ax - b\|\)
+  - **Execution Time**
+- ✅ Verify consistency across all methods
+- ✅ Analyze numerical stability using **Condition Number**
 
-# Features
+---
 
-## Core Features
+## 🧮 Mathematical Background
 
--   Dataset loading
--   Matrix construction
--   Feature standardization
--   Least Squares implementation
--   QR Decomposition solver
--   Singular Value Decomposition solver
--   Linear Regression comparison
--   Numerical evaluation
+### The Least Squares Problem
 
-## Advanced Features
+For an overdetermined system \(Ax = b\), we minimize:
 
-### Least Squares Solver
+\[
+\|Ax - b\|_2^2 = \sum_{i=1}^m (a_i^T x - b_i)^2
+\]
 
-Uses the Moore--Penrose pseudoinverse:
+The solution is given by solving the **normal equations**:
 
-x = A⁺b
+\[
+A^T A x = A^T b
+\]
 
-to compute the optimal least-squares solution without explicitly
-computing the inverse matrix.
+However, solving the normal equations directly can be numerically unstable. Instead, we use more robust decomposition methods.
 
-### QR Decomposition
+### Three Decomposition Methods
 
-Factorizes
+| Method | Mathematical Formulation | Advantages |
+| :--- | :--- | :--- |
+| **Pseudo‑Inverse** | \(x = A^+ b\), where \(A^+ = V \Sigma^+ U^T\) | Simple, works for rank‑deficient matrices |
+| **QR Decomposition** | \(A = QR \Rightarrow R x = Q^T b\) | Numerically stable, efficient |
+| **SVD Decomposition** | \(A = U \Sigma V^T \Rightarrow x = V \Sigma^+ U^T b\) | Most robust, handles ill‑conditioned systems |
 
-A = QR
+---
 
-and solves
-
-Rx = Qᵀb
-
-providing an efficient and numerically stable solution.
-
-### Singular Value Decomposition (SVD)
-
-Factorizes
-
-A = UΣVᵀ
-
-and computes
-
-x = VΣ⁻¹Uᵀb
-
-which is especially robust for ill-conditioned matrices.
-
-### Performance Evaluation
-
-Each method is evaluated using:
-
--   Mean Squared Error (MSE)
--   Coefficient of Determination (R²)
--   Residual Norm
--   Execution Time
-
-### Consistency Verification
-
-The coefficient vectors produced by all methods are compared using
-`numpy.allclose()` to verify numerical equivalence.
-
-------------------------------------------------------------------------
-
-# Mathematical Background
-
-Given
-
-Ax = b
-
-where A ∈ ℝ\^(m×n) and m \> n, the system is generally inconsistent.
-
-The Least Squares problem minimizes
-
-\|\|Ax − b\|\|²
-
-The pseudoinverse solution is
-
-x = A⁺b
-
-Alternative numerical solutions include QR decomposition and Singular
-Value Decomposition.
-
-------------------------------------------------------------------------
-
-# Experimental Results
-
-Using the provided dataset, all methods produced identical solutions
-(within floating-point precision).
-
-  Method                     MSE         R²   Residual Norm
-  ------------------- ---------- ---------- ---------------
-  Least Squares         7.358190   0.986123       11.823942
-  QR Solver             7.358190   0.986123       11.823942
-  SVD Solver            7.358190   0.986123       11.823942
-  Linear Regression     7.358190   0.986123       11.823942
-
-------------------------------------------------------------------------
-
-# Execution Time
-
-Measured execution times:
-
-  Method                Time (seconds)
-  ------------------- ----------------
-  Least Squares             0.00000120
-  QR Solver                 0.00000090
-  SVD Solver                0.00000210
-  Linear Regression         0.00256590
-
-**Insert the execution-time comparison chart here.**
-
-Observation:
-
--   QR Solver achieved the fastest execution time.
--   All four methods produced identical numerical accuracy.
--   Linear Regression required additional overhead due to the
-    Scikit-Learn implementation.
-
-------------------------------------------------------------------------
-
-# Sample Console Output
-
-The console output includes:
-
--   Matrix Information
--   Least Squares coefficients
--   QR coefficients
--   SVD coefficients
--   Linear Regression coefficients
--   MSE
--   R²
--   Residual Norm
--   Consistency Test
--   Execution Time Comparison
-
-------------------------------------------------------------------------
-
-# Educational Concepts
-
-This project demonstrates practical applications of:
-
--   Matrix Algebra
--   Least Squares Optimization
--   QR Decomposition
--   Singular Value Decomposition
--   Numerical Linear Algebra
--   Regression Analysis
--   Performance Evaluation
-
-------------------------------------------------------------------------
-
-# Possible Future Improvements
-
--   Ridge Regression
--   Lasso Regression
--   Cross Validation
--   Polynomial Regression
--   Sparse Matrix Solvers
--   GPU Acceleration
--   Interactive Visualizations
-
-------------------------------------------------------------------------
-
-# Conclusion
-
-The project successfully implemented and compared four numerical
-approaches for solving an overdetermined linear system.
-
-All methods produced identical coefficients, prediction accuracy,
-residual norms, and nearly identical execution times (except for the
-additional overhead of the Scikit-Learn implementation).
-
-The results confirm the mathematical equivalence of Least Squares, QR
-Decomposition, SVD, and Linear Regression for this dataset while
-highlighting the efficiency of QR decomposition.
-
-------------------------------------------------------------------------
-
-# Author
-
-**Minoo**
-
-Bachelor of Computer Engineering
-
-University of Zanjan
-
-Linear Algebra Course Project
-
-2026
+## 📁 Project Structure
